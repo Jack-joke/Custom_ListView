@@ -2,6 +2,7 @@ package com.example.student.myapplication;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,15 +25,13 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<SinhVien> arrSv;
     SinhvienArrayAdapter arrayAdapterLs = null;
     int vitri = -1;
+    public static final int GOIDIMASUA = 300;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         anhxa();
         arrSv = SinhVienModel.getListSinhvienDemo();
-        /*arrSv = new ArrayList<SinhVien>();
-        arrSv.add(new SinhVien("asfasf","asfas","Tin hoc",R.drawable.ic_flag_laos));
-        arrSv.add(new SinhVien("dfgh","asfas","Lap trinh",R.drawable.ic_flag_singapore));*/
         arrayAdapterLs = new SinhvienArrayAdapter( this,R.layout.layout_cus_lst,arrSv);
         lst.setAdapter(arrayAdapterLs);
         lst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,"Ban Khong Duoc Nhap Trùng Noi Dung",Toast.LENGTH_LONG).show();
             return;
         }
-        //Boolean kq = arrSv.add(sv);
         Boolean kq = SinhVienModel.addSinhVien(sv);
         if (kq)
             arrayAdapterLs.notifyDataSetChanged();
@@ -92,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SinhVienModel.removeSinhVien(vitri);
-                //arrSv.remove(vitri);
                 arrayAdapterLs.notifyDataSetChanged();
                 vitri = -1;
                 edtma.setText("");
@@ -113,16 +111,25 @@ public class MainActivity extends AppCompatActivity {
         if (vitri < 0 ){
             Toast.makeText(this,"Chưa chọn item muốn sửa!",Toast.LENGTH_SHORT).show();
             return;
+        }else {
+            SinhVien svSua = arrSv.get(vitri);
+            Intent intent = new Intent(MainActivity.this,XuLySVActivity.class);
+            intent.putExtra("SINHVIENSUA", svSua);
+            startActivityForResult(intent,GOIDIMASUA);
         }
-        //SinhVienModel.updateSinhVien(vitri,R.drawable.ic_flag_thailand,edtten.getText().toString(),spmon.getSelectedItem().toString());
-        /*SinhVien svmod = arrSv.get(vitri);
-        svmod.setMa(edtma.getText().toString());
-        svmod.setTen(edtten.getText().toString());
-        svmod.setMon(spmon.getSelectedItem().toString());*/
-        Intent intent = new Intent(MainActivity.this,XuLySVActivity.class);
-        startActivity(intent);
-        arrayAdapterLs.notifyDataSetChanged();
-        Toast.makeText(this,"Cập nhật thành công!",Toast.LENGTH_SHORT).show();
-    }
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GOIDIMASUA) {
+            switch (resultCode) {
+                case 200:
+                    arrSv = SinhVienModel.getListSinhvienDemo();
+                    arrayAdapterLs = new SinhvienArrayAdapter( this,R.layout.layout_cus_lst,arrSv);
+                    lst.setAdapter(arrayAdapterLs);
+                    break;
+            }
+        }
+    }
 }

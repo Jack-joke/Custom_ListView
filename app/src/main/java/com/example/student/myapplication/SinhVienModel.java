@@ -40,9 +40,9 @@ public class SinhVienModel {
 
     public static ArrayList<SinhVien> updateSinhVien(int i, int img, String ten, String mon) {
         SinhVien sv = ls.get(i);
+        sv.setImg_id(img);
         sv.setTen(ten);
         sv.setMon(mon);
-        sv.setImg_id(img);
         return ls;
     }
 

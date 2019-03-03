@@ -1,8 +1,9 @@
 package com.example.student.myapplication;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class SinhVien {
+public class SinhVien implements Serializable {
     private String ma;
     private String ten;
     private String mon;
